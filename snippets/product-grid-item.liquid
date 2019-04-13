@@ -1,0 +1,103 @@
+{% unless grid_item_width  %}
+{% assign grid_item_width = 'wide--one-third large--one-third medium-down--one-half' %}
+{% endunless %}
+{% if template contains 'product' %}
+{% assign grid_item_width = '' %}
+{% endif %}
+{% unless current_collection == blank %}
+{% assign current_collection = collection %}
+{% endunless %}
+{% assign on_sale = false %}
+{% assign sale_text = 'products.product.sale' | t %}
+{% if product.compare_at_price > product.price %}
+{% assign on_sale = true %}
+{% endif %}
+{% assign sold_out = true %}
+{% assign sold_out_text = 'products.product.sold_out' | t %}
+{% if product.available %}
+{% assign sold_out = false %}
+{% endif %}
+{% assign img_size='grande' %}
+<li class="grid__item item-row  {{grid_item_width}}{% if sold_out %} item-sold-out{% endif %}{% if on_sale %} on-sale{% endif %}" id="product-{{ product.id }}" {% if template contains 'index' %} {% if forloop.index > section.settings.total_products_load %} style="display:none"  data-wow-duration="1{{ forloop.index }}" {% endif %}{% endif %}>
+  <div class="products product-hover-8">
+    <div class="product-container">  
+      <a href="{{ product.url | within: collection }}" class="grid-link">               
+        {% if sold_out and settings.collections_show_sold_out_circle %}
+        <span class="badge badge--sold-out">
+          <span class="badge__text{% if sold_out_text.size > 9 %} badge__text--small{% endif %}">{{ 'products.product.sold_out' | t }}</span>
+        </span>
+        {% endif %}   
+        <div class="ImageOverlayCa"></div>
+        {% if product.images.size > 1 %}
+        <div class="reveal"> 
+          <span class="product-additional">      
+            <img src="{{ product.featured_image.src | img_url: img_size }}" class="featured-image" alt="{{ product.featured_image.alt | escape }}">
+          </span>
+          <img  src="{{ product.images.last | product_img_url: img_size }}" class="hidden-feature_img" alt="{{ product.images.last.alt | escape }}" />
+        </div>      
+        {% else %}
+        <img src="{{ product.featured_image.src | img_url: img_size }}" class="featured-image" alt="{{ product.featured_image.alt | escape }}">
+        {% endif %}
+      </a>
+      <div class="product_right_tag  {% if on_sale %} offer_exist {% endif %}">
+        {% if on_sale %}{% include 'offer-price' %} {% endif %} 
+      </div>
+    
+      <ul class="product-button"> 
+        
+        
+        
+       
+        {% if settings.enable_add_cart %}
+        <li class ="add_cart_btn">
+          {% if product.available %}    
+          <form  action="/cart/add" method="post" class="variants clearfix" id="cart-form-{{ product.id }}">                                    
+            <input type="hidden" name="id" value="{{ product.variants[0].id }}" />  
+            <a class="add-cart-btn">
+              <i class="fa fa-shopping-cart"></i>{{ 'products.product.add_to_cart' | t }}
+            </a>
+          </form>  
+
+          {% endif %}
+        </li>
+        {% endif %} 
+         {% if settings.enable_quick_view %}   
+        <li class="quick_view">
+          <a href="javascript:void(0)" id="{{ product.handle }}" class="quick-view-text">                      
+            <i class="icon-eye" aria-hidden="true"></i>
+          </a>    
+        </li>
+        {% endif %}
+        {% if settings.enable_wishlist %}       
+        <li class="wish_icon">
+          {% include 'wishlist-icon' %}        
+        </li>
+        {% endif %} 
+
+      </ul>
+    </div>
+
+    <div class="product-detail">  
+      <a href="{{ product.url | within: collection }}" class="grid-link__title">{{ product.title }}</a> 
+      <div class="grid-link__meta">
+        <div class="product_price">
+
+          {% capture price %}{{ product.price | money }}{% endcapture %}
+          <div class="grid-link__org_price">
+            {% if product.price_varies %}{{ price }}{% else %}{{ price }}{% endif %}
+          </div>
+
+          {% if on_sale %}
+          <del class="grid-link__sale_price">{{ product.compare_at_price | money }}</del>
+          {% endif %}
+        </div>        
+        {% if settings.product_review %}     <span class="shopify-product-reviews-badge" data-id="{{ product.id }}"></span> {% endif %}
+      </div>
+
+
+
+
+    </div>
+  </div>
+
+</li>

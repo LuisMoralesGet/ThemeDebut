@@ -1,0 +1,177 @@
+{{ 'core-file.js' | asset_url | script_tag }}
+{{ 'core-file.css' | asset_url | stylesheet_tag }}
+<div data-section-id="{{ section.id }}"  data-section-type="home-product-grid-type-12-b" class="home-product-grid-type-12-b">
+  <div class="container">
+    {%- assign collection = collections[section.settings.collection] -%}   
+
+    {% if section.settings.title != blank or section.settings.small_title != blank %}
+    <div class="border-title wow fadeInDown animated">
+      {% if section.settings.title != blank %}
+      <h2 class="section-header__title" style="color:{{ section.settings.title_color }};">    
+        {{ section.settings.title }}
+      </h2>
+      {% endif %}      
+      {% if section.settings.small_title != blank %}<div class="short-desc">  <p style="color:{{ section.settings.small_title_color }};">{{ section.settings.small_title }}</p></div>{% endif %}   
+    </div>
+    {% endif %}
+    <div class="product-grid-type-12">
+      {% assign grid_item_width = ' ' %} 
+      <ul class="grid-uniform product-grid-type__12-b {{ section.id }} owl-carousel owl-theme">
+        {% for product in collection.products %}
+        {% include 'product-grid-item', grid_item_width:grid_item_width %}   
+         {% else %}
+                    {% for i in (1..8) %}
+                    <li class="grid__item item-row  on-sale" id="product-{{ i }}">
+                      <div class="products">
+                        <div class="product-container">
+                          <a href="#" class="grid-link"> 
+                            {% if forloop.index == 3 %}
+                            <div class="featured-tag">
+                              <span class="badge badge--sale">
+                                <i class="fa fa-star"></i>
+                                <span class="gift-tag badge__text{% if sale_text.size > 7 %} badge__text--small{% endif %}">{{ 'products.product.sale' | t }}</span>
+                              </span>
+                            </div>{% endif %}
+
+                            <div class="reveal"> 
+                              {% capture current %}{% cycle 1, 2, 3, 4, 5, 6 %}{% endcapture %}
+                              {{ 'product-' | append: current | placeholder_svg_tag: 'placeholder-svg' }} 
+                            </div>
+                          </a>
+                          <div class="ImageWrapper">
+                           
+                          </div>
+                        </div>
+                        <div class="product-detail"> 
+                          <a href="#" class="grid-link__title">Sample title {{ i }}</a>
+
+                          <div class="grid-link__meta">
+                            <div class="product_price"> <span class="money" data-currency-usd="$320.00">$0.00</span> </div>
+                            <del class="grid-link__sale_price"><span class="money" data-currency-usd="$756.00">$0.00</span></del> </div>
+                          <span class="spr-badge" id="spr_badge_6529189125" data-rating="0.0"> 
+                            <span class="spr-starrating spr-badge-starrating"><i class="spr-icon spr-icon-star-empty" style="color: #f05315;"></i><i class="spr-icon spr-icon-star-empty" style="color: #f05315;"></i><i class="spr-icon spr-icon-star-empty" style="color: #f05315;"></i><i class="spr-icon spr-icon-star-empty" style="color: #f05315;"></i><i class="spr-icon spr-icon-star-empty" style="color: #f05315;"></i></span> <span class="spr-badge-caption"> </span> </span>
+
+                        </div>
+                      </div>
+                    </li>
+                    {% endfor %} 
+        {% endfor %}
+      </ul>
+      <div class="nav_product-grid-type__12-b"> </div>
+
+    </div>
+    <style>
+      .home-product-grid-type-12-b .nav_product-grid-type__12 a {  color:{{ section.settings.arrow_text_clr }}; }
+      .home-product-grid-type-12-b .nav_product-grid-type__12 a:hover {  color:{{ section.settings.arrow_text_hover_clr }}; }
+      {% if section.settings.heading_image_need %} .home-product-grid-type-12-b .border-title:after {  content:"";background-image:url({{ section.settings.heading_image | img_url: 'master' }});display:inline-block;background-repeat:no-repeat;width:105px;height:17px;} {% endif %}
+
+    </style>
+  </div>
+  <div class="dt-sc-hr-invisible-large"></div> 
+</div>
+
+<script type="text/javascript">
+jQuery(function($){
+    var grid_type_12 = $(".product-grid-type__12-b.{{ section.id }}");
+      grid_type_12.owlCarousel({
+        loop:false,
+        margin:0,
+        nav:false,
+       navContainer: ".nav_product-grid-type__12-b",
+        navText: ['<a class="prev btn"><i class="fa fa-angle-left" aria-hidden="true"></i></a>','<a class="next btn"><i class="fa fa-angle-right" aria-hidden="true"></i></a>'],
+        dots: false,
+        responsive:{
+                           0:{
+                           items:1,
+                           center: true
+                           },
+                           568:{
+                           items:2
+                           },
+                           768:{
+                           items:3
+                           },
+                           1000:{
+                           items:{{ section.settings.items }}
+                           }
+        }
+      });
+});
+  $(document).ready(function(){   
+    (function ($) {
+      
+    })(jQuery);
+  });
+      
+</script>
+{% schema %}
+{
+  "name": "Product Carousel",
+  "class": "index-section",
+  "settings": [ 
+	{
+      "type": "text",
+      "id": "title",
+      "label": "Heading",
+      "default": "New arrivals"
+    },	
+	{
+      "type": "color",
+      "id": "title_color",
+      "label": "Heading Color",
+      "default": "#000"
+    },	
+	
+
+    {
+      "id": "collection",
+      "type": "collection",
+      "label": "Collection"
+    },
+{
+      "type": "select",
+      "id": "items",
+      "label": "Carousel Items",
+      "default": "left",
+      "options": [
+		{
+          "value": "1",
+          "label": "1"
+        },        
+		{
+          "value": "2",
+          "label": "2"
+        },
+        {
+          "value": "3",
+          "label": "3"
+        },
+		{
+          "value": "4",
+          "label": "4"
+        },
+		{
+          "value": "5",
+          "label": "5"
+        },
+		{
+          "value": "6",
+          "label": "6"
+        }
+      ],
+ 		"default": "4",
+        "info": "4"
+    }
+  
+  ],
+  "presets": [
+    {
+         "name": "Product Carousel",
+      "category": "Collection"
+    }
+  ]
+}
+{% endschema %}
+
+
+

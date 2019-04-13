@@ -1,0 +1,1 @@
+{% if settings.offer_price_enable %}{% if product.compare_at_price_max > product.price %}<span class="offer-price">{{ 'products.product.save' |t }} <br> <b>{{ product.compare_at_price_max | minus: product.price | times: 100.0 | divided_by: product.compare_at_price_max | money_without_currency | times: 100 | remove: '.0'}}% </b></span>{% endif %}{% endif %}
