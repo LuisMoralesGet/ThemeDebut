@@ -38,6 +38,8 @@
   {% include 'social-meta-tags' %}
 
   {{ 'theme.scss.css' | asset_url | stylesheet_tag }}
+  {{ 'frame.scss.css' | asset_url | stylesheet_tag }} 
+  {{ 'core-file.css' | asset_url | stylesheet_tag }}
 
   <script>
     var theme = {
@@ -78,6 +80,7 @@
 
   <!--[if (gt IE 9)|!(IE)]><!--><script src="{{ 'theme.js' | asset_url }}" defer="defer"></script><!--<![endif]-->
   <!--[if lte IE 9]><script src="{{ 'theme.js' | asset_url }}"></script><![endif]-->
+  {{ 'core-file.js' | asset_url | script_tag }}
 
   {{ content_for_header }}
 </head>
