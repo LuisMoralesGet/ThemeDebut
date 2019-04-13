@@ -1,0 +1,595 @@
+<div data-section-id="{{ section.id }}" data-section-type="slideshow-section">
+
+  {% if section.blocks.size > 0 %}
+    <div class="slideshow-wrapper">
+      <button type="button" class="visually-hidden slideshow__pause" data-id="{{ section.id }}" aria-live="polite">
+        <span class="slideshow__pause-stop">
+          {% include 'icon-pause' %}
+          <span class="icon__fallback-text">{{ 'sections.slideshow.pause_slideshow' | t }}</span>
+        </span>
+        <span class="slideshow__pause-play">
+          {% include 'icon-play' %}
+          <span class="icon__fallback-text">{{ 'sections.slideshow.play_slideshow' | t }}</span>
+        </span>
+      </button>
+
+      <div class="slideshow slideshow--{{ section.settings.slideshow_height }}" id="Slideshow-{{ section.id }}" data-autoplay="{{ section.settings.autoplay }}" data-speed="{{ section.settings.autoplay_speed | times: 1000 }}">
+        {% for block in section.blocks %}
+          {%- assign is_background_video = false -%}
+          {% if block.type == 'video' %}
+            {% if block.settings.video_type == 'background' or block.settings.video_type =='background-chrome' %}
+              {%- assign is_background_video = true -%}
+            {% endif %}
+          {% endif %}
+
+          <div class="slideshow__slide slideshow__slide--{{ block.id }}{% if is_background_video %} slideshow__slide--background-video{% endif %}" {{ block.shopify_attributes }}>
+            {% if block.settings.link != blank %}
+              <a href="{{ block.settings.link }}" class="slideshow__link">
+            {% endif %}
+
+            {% if block.type == 'video' %}
+              {% if block.settings.video_url != blank %}
+                <div class="video-loader"></div>
+              {% endif %}
+              {% unless block.settings.video_type == 'background' %}
+                <button type="button" class="text-link slideshow__video-control slideshow__video-control--close" data-controls="SlideshowVideo-{{ block.id }}">
+                  {% include 'icon-close' %}
+                  <span class="icon__fallback-text">{{ 'sections.slideshow.close_video' | t }}</span>
+                </button>
+              {% endunless %}
+              {% if block.settings.video_url != blank %}
+                <div id="SlideshowVideo-{{ block.id }}" class="slideshow__video {% if is_background_video %}slideshow__video--background{% endif %} slideshow__video--{{ block.settings.video_type }}"
+                  data-id="{{ block.settings.video_url.id }}"
+                  data-type="{{ block.settings.video_type }}"
+                  data-slideshow="Slideshow-{{ section.id }}"></div>
+              {% endif %}
+            {% endif %}
+
+            {% if block.settings.image == blank %}
+              <div class="slideshow__image js">
+                <div class="placeholder-background">
+                  {% capture current %}{% cycle 1, 2 %}{% endcapture %}
+                  {{ 'lifestyle-' | append: current | placeholder_svg_tag: 'placeholder-svg' }}
+                </div>
+              </div>
+            {% else %}
+              <div class="slideshow__image box ratio-container lazyload{% unless forloop.first == true %} lazypreload{% endunless %} js"
+                   data-bgset="{% include 'bgset', image: block.settings.image %}"
+                   data-sizes="auto"
+                   data-parent-fit="cover"
+                   style="background-position: {{ block.settings.alignment }};{% if forloop.first == true %} background-image: url('{{ block.settings.image | img_url: '300x300' }});{% endif %}">
+              </div>
+            {% endif %}
+
+            <noscript>
+              <div class="slideshow__image"{% if block.settings.image %} style="background-image: url('{{ block.settings.image | img_url: '2048x' }}'); background-position: {{ block.settings.alignment }};"{% endif %}>
+                {% if block.settings.image == blank %}
+                  <div class="placeholder-background">
+                    {% capture current %}{% cycle 1, 2 %}{% endcapture %}
+                    {{ 'lifestyle-' | append: current | placeholder_svg_tag: 'placeholder-svg' }}
+                  </div>
+                {% endif %}
+              </div>
+            </noscript>
+            <div class="slideshow__text-wrap{% if block.settings.title != blank or block.settings.subheading != blank %} slideshow__overlay{% endif %}">
+              <div class="slideshow__text-content">
+                <div class="page-width">
+                  {% unless block.settings.title == blank %}
+                    <h2 class="h1 mega-title slideshow__title{% if settings.link != blank %} slideshow__title--has-link{% endif %}{% if section.settings.text_size == 'large' %} mega-title--large{% endif %}">
+                      {{ block.settings.title | escape }}
+                    </h2>
+                  {% endunless %}
+                  {% unless block.settings.subheading == blank %}
+                    <span class="mega-subtitle slideshow__subtitle{% if section.settings.text_size == 'large' %} mega-subtitle--large{% endif %}">
+                      {{ block.settings.subheading | escape }}
+                    </span>
+                  {% endunless %}
+                  {% if block.type == 'video' %}
+                    {% unless block.settings.video_type == 'background' %}
+                      <div class="slideshow__video-control--play-wrapper{% if block.settings.title != blank or block.settings.subheading != blank %} slideshow__video-control--play-wrapper--push{% endif %}">
+                        <button type="button" class="text-link slideshow__video-control slideshow__video-control--play" data-controls="SlideshowVideo-{{ block.id }}">
+                          {% include 'icon-play-video' %}
+                          <span class="icon__fallback-text">{{ 'sections.slideshow.play_video' | t }}</span>
+                        </button>
+                      </div>
+                    {% endunless %}
+                  {% endif %}
+                </div>
+              </div>
+            </div>
+
+            {% if block.settings.link != blank %}
+              </a>
+            {% endif %}
+          </div>
+        {% endfor %}
+      </div>
+    </div>
+  {% endif %}
+
+  {% if section.blocks.size == 0 %}
+    <div class="placeholder-noblocks">
+      {{ 'homepage.onboarding.no_content' | t }}
+    </div>
+  {% endif %}
+</div>
+
+
+
+{% schema %}
+{
+  "name": {
+    "de": "Slideshow",
+    "en": "Slideshow",
+    "es": "Diapositivas",
+    "fr": "Diaporama",
+    "it": "Presentazione",
+    "ja": "スライドショー",
+    "pt-BR": "Apresentação de slides"
+  },
+  "class": "index-section index-section--flush",
+  "max_blocks": 4,
+  "settings": [
+    {
+      "type": "checkbox",
+      "id": "autoplay",
+      "label": {
+        "de": "Auto-rotieren der Slides",
+        "en": "Auto-rotate slides",
+        "es": "Rotar las diapositivas automáticamente",
+        "fr": "Rotation automatique des diapositives",
+        "it": "Ruota slide automaticamente",
+        "ja": "スライドの自動切り替え",
+        "pt-BR": "Rodar os slides automaticamente"
+      },
+      "default": true
+    },
+    {
+      "type": "range",
+      "id": "autoplay_speed",
+      "label": {
+        "de": "Slides überall ändern",
+        "en": "Change slides every",
+        "es": "Cambiar diapositivas cada",
+        "fr": "Changer de diapositive toutes les",
+        "it": "Cambia slide ogni",
+        "ja": "スライドを変更する間隔",
+        "pt-BR": "Mudar os slides a cada"
+      },
+      "max": 10,
+      "min": 5,
+      "step": 1,
+      "unit": {
+        "de": "sek",
+        "en": "sec",
+        "es": "seg",
+        "fr": "sec",
+        "it": "sec",
+        "ja": "秒",
+        "pt-BR": "s"
+      },
+      "default": 7
+    },
+    {
+      "type": "select",
+      "id": "slideshow_height",
+      "label": {
+        "de": "Höhe des Bereichs",
+        "en": "Section height",
+        "es": "Altura de la sección",
+        "fr": "Taille de la section",
+        "it": "Altezza sezione",
+        "ja": "セクションの高さ",
+        "pt-BR": "Altura da seção"
+      },
+      "default": "small",
+      "options": [
+        {
+          "label": {
+            "de": "Klein",
+            "en": "Small",
+            "es": "Pequeña",
+            "fr": "Petite",
+            "it": "Piccolo",
+            "ja": "小",
+            "pt-BR": "Pequeno"
+          },
+          "value": "small"
+        },
+        {
+          "label": {
+            "de": "Mittel",
+            "en": "Medium",
+            "es": "Mediana",
+            "fr": "Moyenne",
+            "it": "Medio",
+            "ja": "中",
+            "pt-BR": "Médio"
+          },
+          "value": "medium"
+        },
+        {
+          "label": {
+            "de": "Groß",
+            "en": "Large",
+            "es": "Grande",
+            "fr": "Grande",
+            "it": "Grande",
+            "ja": "大",
+            "pt-BR": "Grande"
+          },
+          "value": "large"
+        }
+      ]
+    },
+    {
+      "type": "select",
+      "id": "text_size",
+      "label": {
+        "de": "Textgröße",
+        "en": "Text size",
+        "es": "Tamaño del texto",
+        "fr": "Taille du texte",
+        "it": "Dimensione testo",
+        "ja": "文字サイズ",
+        "pt-BR": "Tamanho do texto"
+      },
+      "default": "medium",
+      "options": [
+        {
+          "label": {
+            "de": "Mittel",
+            "en": "Medium",
+            "es": "Mediano",
+            "fr": "Moyenne",
+            "it": "Medio",
+            "ja": "中",
+            "pt-BR": "Médio"
+          },
+          "value": "medium"
+        },
+        {
+          "label": {
+            "de": "Groß",
+            "en": "Large",
+            "es": "Grande",
+            "fr": "Grande",
+            "it": "Grande",
+            "ja": "大",
+            "pt-BR": "Grande"
+          },
+          "value": "large"
+        }
+      ]
+    }
+  ],
+  "blocks": [
+    {
+      "type": "image",
+      "name": {
+        "de": "Foto-Slide",
+        "en": "Image slide",
+        "es": "Diapositiva de imagen",
+        "fr": "Diapositive (image)",
+        "it": "Slide immagine",
+        "ja": "画像スライド",
+        "pt-BR": "Slide de imagem"
+      },
+      "settings": [
+        {
+          "type": "image_picker",
+          "id": "image",
+          "label": {
+            "de": "Foto",
+            "en": "Image",
+            "es": "Imagen",
+            "fr": "Image",
+            "it": "Immagine",
+            "ja": "画像",
+            "pt-BR": "Imagem"
+          }
+        },
+        {
+          "type": "select",
+          "id": "alignment",
+          "label": {
+            "de": "Fotoausrichtung",
+            "en": "Image alignment",
+            "es": "Alineación de imagen",
+            "fr": "Alignement de l'image",
+            "it": "Allineamento immagine",
+            "ja": "画像アラインメント",
+            "pt-BR": "Alinhamento da imagem"
+          },
+          "default": "top",
+          "options": [
+            {
+              "value": "top",
+              "label": {
+                "de": "Oben",
+                "en": "Top",
+                "es": "Superior",
+                "fr": "Haut",
+                "it": "Alto",
+                "ja": "上",
+                "pt-BR": "Acima"
+              }
+            },
+            {
+              "value": "center",
+              "label": {
+                "de": "Mitte",
+                "en": "Middle",
+                "es": "Centrada",
+                "fr": "Milieu",
+                "it": "Centrale",
+                "ja": "中央",
+                "pt-BR": "Meio"
+              }
+            },
+            {
+              "value": "bottom",
+              "label": {
+                "de": "Unten",
+                "en": "Bottom",
+                "es": "Inferior",
+                "fr": "Bas",
+                "it": "Basso",
+                "ja": "下",
+                "pt-BR": "Abaixo"
+              }
+            }
+          ]
+        },
+        {
+          "type": "text",
+          "id": "title",
+          "label": {
+            "de": "Titel",
+            "en": "Heading",
+            "es": "Título",
+            "fr": "En-tête",
+            "it": "Heading",
+            "ja": "見出し",
+            "pt-BR": "Título"
+          },
+          "default": {
+            "de": "Foto-Slide",
+            "en": "Image slide",
+            "es": "Diapositiva de imagen",
+            "fr": "Diapositive (image)",
+            "it": "Slide immagine",
+            "ja": "画像スライド",
+            "pt-BR": "Slide de imagem"
+          }
+        },
+        {
+          "type": "text",
+          "id": "subheading",
+          "label": {
+            "de": "Untertitel",
+            "en": "Subheading",
+            "es": "Subtítulo",
+            "fr": "Sous-titre",
+            "it": "Sottotitolo",
+            "ja": "小見出し",
+            "pt-BR": "Subtítulo"
+          },
+          "default": {
+            "de": "Erzählen Sie Ihre Geschichte mit Videos und Fotos",
+            "en": "Tell your brand's story through video and images",
+            "es": "Cuenta la historia de tu marca a través de videos e imágenes",
+            "fr": "Racontez votre histoire avec des vidéos et des images",
+            "it": "Racconta la storia del tuo brand con video e immagini",
+            "ja": "あなたのブランドのストーリーをビデオや画像で伝える",
+            "pt-BR": "Conte a história da sua marca com vídeos e imagens"
+          }
+        },
+        {
+          "type": "url",
+          "id": "link",
+          "label": {
+            "de": "Slide-Link",
+            "en": "Slide link",
+            "es": "Enlace de la diapositiva",
+            "fr": "Lien de la diapositive",
+            "it": "Link slide",
+            "ja": "スライドリンク",
+            "pt-BR": "Link do slide"
+          }
+        }
+      ]
+    },
+    {
+      "type": "video",
+      "name": {
+        "de": "Video-Slide",
+        "en": "Video slide",
+        "es": "Diapositiva de video",
+        "fr": "Diapositive (vidéo)",
+        "it": "Slide video",
+        "ja": "ビデオスライド",
+        "pt-BR": "Slide de vídeo"
+      },
+      "settings": [
+        {
+          "type": "video_url",
+          "id": "video_url",
+          "label": {
+            "de": "Video-Link",
+            "en": "Video link",
+            "es": "Enlace de video",
+            "fr": "Lien de la vidéo",
+            "it": "Link video",
+            "ja": "ビデオリンク",
+            "pt-BR": "Link do vídeo"
+          },
+          "accept": [
+            "youtube"
+          ],
+          "default": {
+            "de": "https://www.youtube.com/watch?v=_9VUPq3SxOc",
+            "en": "https://www.youtube.com/watch?v=_9VUPq3SxOc",
+            "es": "https://www.youtube.com/watch?v=_9VUPq3SxOc",
+            "fr": "https://www.youtube.com/watch?v=_9VUPq3SxOc",
+            "it": "https://www.youtube.com/watch?v=_9VUPq3SxOc",
+            "ja": "https://www.youtube.com/watch?v=_9VUPq3SxOc",
+            "pt-BR": "https://www.youtube.com/watch?v=_9VUPq3SxOc"
+          }
+        },
+        {
+          "type": "select",
+          "id": "video_type",
+          "label": {
+            "de": "Stil",
+            "en": "Style",
+            "es": "Estilo",
+            "fr": "Style",
+            "it": "Stile",
+            "ja": "スタイル",
+            "pt-BR": "Estilo"
+          },
+          "options": [
+            {
+              "value": "chrome",
+              "label": {
+                "de": "Foto mit Play Button",
+                "en": "Image with play button",
+                "es": "Imagen con el botón de reproducir",
+                "fr": "Image avec bouton de lecture",
+                "it": "Immagine con pulsante play",
+                "ja": "再生ボタン付き画像",
+                "pt-BR": "Imagem com botão de reprodução"
+              }
+            },
+            {
+              "value": "background-chrome",
+              "label": {
+                "de": "Hintergrund-Video mit Play Button",
+                "en": "Background video with play button",
+                "es": "Video de fondo con el botón de reproducir",
+                "fr": "Vidéo d'arrière-plan avec bouton de lecture",
+                "it": "Video in background con pulsante play",
+                "ja": "再生ボタン付き背景ビデオ",
+                "pt-BR": "Vídeo de fundo com botão de reprodução"
+              }
+            },
+            {
+              "value": "background",
+              "label": {
+                "de": "Hintergrund-Video",
+                "en": "Background video",
+                "es": "Video de fondo",
+                "fr": "Vidéo d'arrière-plan",
+                "it": "Video in background",
+                "ja": "背景ビデオ",
+                "pt-BR": "Vídeo de fundo"
+              }
+            }
+          ]
+        },
+        {
+          "type": "image_picker",
+          "id": "image",
+          "label": {
+            "de": "Foto",
+            "en": "Image",
+            "es": "Imagen",
+            "fr": "Image",
+            "it": "Immagine",
+            "ja": "画像",
+            "pt-BR": "Imagem"
+          },
+          "info": {
+            "de": "Ersatz, falls Video nicht automatisch auf Mobilgeräten abspielt",
+            "en": "Fallback when autoplaying video is not supported on mobile devices",
+            "es": "No se admite reserva cuando se reproduce un video en dispositivos móviles automáticamente",
+            "fr": "Image affichée lorsque la vidéo n'est pas supportée sur les appareils mobiles",
+            "it": "Immagine alternativa per i dispositivi mobili che non supportano la riproduzione automatica del video",
+            "ja": "モバイル端末でビデオの自動再生がサポートされていない場合のフォールバック",
+            "pt-BR": "Alternativa quando a reprodução automática de vídeo não for compatível com dispositivos móveis"
+          }
+        },
+        {
+          "type": "text",
+          "id": "title",
+          "label": {
+            "de": "Titel",
+            "en": "Heading",
+            "es": "Título",
+            "fr": "En-tête",
+            "it": "Heading",
+            "ja": "見出し",
+            "pt-BR": "Título"
+          },
+          "default": {
+            "de": "Video-Slide",
+            "en": "Video slide",
+            "es": "Diapositiva de video",
+            "fr": "Diapositive (vidéo)",
+            "it": "Slide video",
+            "ja": "ビデオスライド",
+            "pt-BR": "Slide de vídeo"
+          }
+        },
+        {
+          "type": "text",
+          "id": "subheading",
+          "label": {
+            "de": "Untertitel",
+            "en": "Subheading",
+            "es": "Subtítulo",
+            "fr": "Sous-titre",
+            "it": "Sottotitolo",
+            "ja": "小見出し",
+            "pt-BR": "Subtítulo"
+          },
+          "default": {
+            "de": "Erzählen Sie Ihre Geschichte mit Videos und Fotos",
+            "en": "Tell your brand's story through video and images",
+            "es": "Cuenta la historia de tu marca a través de videos e imágenes",
+            "fr": "Racontez votre histoire avec des vidéos et des images",
+            "it": "Racconta la storia del tuo brand con video e immagini",
+            "ja": "あなたのブランドのストーリーをビデオや画像で伝える",
+            "pt-BR": "Conte a história da sua marca com vídeos e imagens"
+          }
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": {
+        "de": "Slideshow",
+        "en": "Slideshow",
+        "es": "Diapositivas",
+        "fr": "Diaporama",
+        "it": "Presentazione",
+        "ja": "スライドショー",
+        "pt-BR": "Apresentação de slides"
+      },
+      "category": {
+        "de": "Foto",
+        "en": "Image",
+        "es": "Imagen",
+        "fr": "Image",
+        "it": "Immagine",
+        "ja": "画像",
+        "pt-BR": "Imagem"
+      },
+      "settings": {
+        "autoplay": true,
+        "autoplay_speed": 5
+      },
+      "blocks": [
+        {
+          "type": "image"
+        },
+        {
+          "type": "image"
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}
