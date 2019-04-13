@@ -1,0 +1,19 @@
+// Helpers
+@import 'helpers/variables';
+@import 'helpers/functions';
+@import 'helpers/mixins';
+@import 'helpers/placeholders';
+
+// Base styles
+@import 'base/base';
+@import 'base/typography';
+
+// Vendors : estilos de plugins, etc
+//@import 'vendors';
+
+// Layouts
+@import 'layout/menu';
+@import 'layout/footer';
+
+// Secciones por separado
+@import 'sections/home';

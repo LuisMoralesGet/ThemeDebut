@@ -1,0 +1,43 @@
+{
+  "name": "more-shopify",
+  "version": "1.0.0",
+  "description": "Fork of shopify debut theme, for More Co",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/soycamis/more-shopify.git"
+  },
+  "keywords": [
+    "shopify",
+    "liquid",
+    "css",
+    "sass",
+    "javascript"
+  ],
+  "author": "@soycamis",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/soycamis/more-shopify/issues"
+  },
+  "homepage": "https://github.com/soycamis/more-shopify#readme",
+  "dependencies": {
+    "jquery": "^3.3.1",
+    "swiper": "^4.3.3"
+  },
+  "devDependencies": {
+    "babel-core": "^6.26.3",
+    "babel-preset-env": "^1.7.0",
+    "gulp": "^3.9.1",
+    "gulp-autoprefixer": "^5.0.0",
+    "gulp-babel": "^7.0.1",
+    "gulp-cli": "^2.0.1",
+    "gulp-concat": "^2.6.1",
+    "gulp-imagemin": "^4.1.0",
+    "gulp-sass": "^4.0.1",
+    "imagemin-pngquant": "^5.1.0",
+    "merge-stream": "^1.0.1"
+  }
+}
