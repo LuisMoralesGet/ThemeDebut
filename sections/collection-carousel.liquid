@@ -3,15 +3,6 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.9.0/slick.min.css" />
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.9.0/slick-theme.min.css" />
 <div class="page-width">
-    <!-- Se declara si la imagen es vacia -->
-      {% if collection.image %}
-      {%- assign collection_image = collection.image -%}
-    {% elsif collection.products.first and collection.products.first.images != empty %}
-      {%- assign collection_image = collection.products.first.featured_image -%}
-    {% else %}
-      {% assign collection_image = blank %}
-    {% endif %}
-     <!-- Se declara si la imagen es vacia -->
     {% if section.settings.title != blank %}
       <div class="section-header text-center">
         <h2>{{ section.settings.title | escape }}</h2>
@@ -32,40 +23,8 @@
     <div class="collection-grid carouselCollection">
         <div class="grid grid--uniform {{section.id}}-carousel carouselCollection-container">
            {% for block in section.blocks limit: section.blocks.size %}
-                <div class="collection-grid-item">
-                <a href="{% if collection.products == empty %}#{% else %}{{ collection.url }}{% endif %}" class="collection-grid-item__link">
-                  {% unless collection_image == blank %}
-                    <div class="collection-grid-item__overlay box ratio-container lazyload js"
-                      data-bgset="{% include 'bgset', image: collection_image %}"
-                      data-sizes="auto"
-                      data-parent-fit="cover"
-                      style="background-image: url('{{ collection_image | img_url: '300x300' }}')">
-                    </div>
-                    <noscript>
-                      <div class="collection-grid-item__overlay" style="background-image: url('{{ collection_image | img_url: '1024x1024' }}')"></div>
-                    </noscript>
-                  {% else %}
-                    {% if collection == empty %}
-                      <div class="collection-grid-item__overlay">
-                        {% capture current %}{% cycle 1, 2, 3 %}{% endcapture %}
-                        {{ 'collection-' | append: current | placeholder_svg_tag: 'placeholder-svg' }}
-                      </div>
-                    {% else %}
-                      <div class="collection-grid-item__overlay" style="background-image: url('{{ collection_image | img_url: '1024x1024' }}')"></div>
-                    {% endif %}
-                  {% endunless %}
-              
-                  <div class="collection-grid-item__title-wrapper">
-                    <div class="collection-grid-item__title h3">
-                      {% if collection.title == blank %}
-                        {{ 'homepage.onboarding.collection_title' | t }}
-                      {% else %}
-                        {{ collection.title }}
-                      {% endif %}
-                    </div>
-                  </div>
-                </a>
-                </div>
+           {%- assign collection = collections[block.settings.collection] -%}
+           {% include 'collection-grid-item' %}
            {% endfor %}
         </div>
     </div>
